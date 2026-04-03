@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>When AI Chooses Colors: An Audit of Color Inclusivity and Prompting Strategies in Data Visualization Generation</title>
+    <title>When AI Chooses Colors: An Audit of Color Inclusivity and Prompting Strategies in Generative Data Visualization</title>
     <script src="d3.min.js"></script>
     <style>
         * {
@@ -17,6 +17,47 @@
             background: #1a1a2e;
             color: #eee;
             padding: 20px;
+        }
+
+        .home-card {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 40px;
+            width: 320px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #333;
+        }
+        .home-card:hover {
+            transform: translateY(-5px);
+            border-color: #e94560;
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.2);
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.4;
+            filter: blur(60px);
+        }
+        .c1 { background: #e94560; top: -100px; left: -100px; }
+        .c2 { background: #4a90d9; top: 20%; right: -80px; }
+        .c3 { background: #9b59b6; bottom: 10%; left: 20%; }
+        .c4 { background: #2ecc71; bottom: -50px; right: 15%; }
+        @keyframes move {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(100px, 80px) scale(1.3); }
         }
 
         /* Toggle Switch */
@@ -294,18 +335,51 @@
     </style>
 </head>
 <body>
-    <h1>When AI Chooses Colors</h1>
-    <h2 style="text-align:center; margin-bottom:30px; color:#888; font-size:16px; font-weight:normal;">
-        An Audit of Color Inclusivity and Prompting Strategies in Data Visualization Generation
-    </h2>
-
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('mosaic', event)">Mosaic View</button>
-        <button class="tab-btn" onclick="switchTab('scatter', event)">Scatter Plot</button>
-        
+    <div style="text-align: center; padding: 40px 20px 30px;">
+        <h1 style="font-size: 38px; font-weight: 400; margin-bottom: 14px; letter-spacing: -0.5px;">When AI Chooses Colors</h1>
+        <h2 style="font-size: 16px; font-weight: 300; color: #999;">An Audit of Color Inclusivity and Prompting Strategies in Generative Data Visualization</h2>
     </div>
 
-    <div id="mosaic" class="view active">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('home', event)">Home</button>
+        <button class="tab-btn" onclick="switchTab('mosaic', event)">Mosaic View</button>
+        <button class="tab-btn" onclick="switchTab('scatter', event)">Scatter Plot</button>
+    </div>
+
+    <div id="bgAnim" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;">
+        <div id="cir1" style="position:absolute;border-radius:50%;opacity:0.25;filter:blur(60px);background:#e94560;width:400px;height:400px;top:-100px;left:-100px;"></div>
+        <div id="cir2" style="position:absolute;border-radius:50%;opacity:0.25;filter:blur(60px);background:#4a90d9;width:350px;height:350px;top:20%;right:-80px;"></div>
+        <div id="cir3" style="position:absolute;border-radius:50%;opacity:0.25;filter:blur(60px);background:#9b59b6;width:300px;height:300px;bottom:10%;left:20%;"></div>
+        <div id="cir4" style="position:absolute;border-radius:50%;opacity:0.25;filter:blur(60px);background:#2ecc71;width:280px;height:280px;bottom:-50px;right:15%;"></div>
+    </div>
+
+    <div id="home" class="view active">
+        <div style="max-width: 900px; margin: 60px auto; text-align: center; position: relative; z-index: 1;">
+            <p style="color: #aaa; line-height: 1.8; margin-bottom: 50px; max-width: 800px; margin-left: auto; margin-right: auto;">
+                We audited four leading generative AI models (<strong>GPT-4.5</strong>, <strong>Claude 4 Opus</strong>, <strong>Gemini 3.1 Pro</strong>, and <strong>DeepSeek V3</strong>)
+                across three visualization categories: <strong>Gender</strong> (Man/Woman), <strong>Political ideology</strong> (Left/Right),
+                and <strong>Stock market</strong> (Profit/Loss). This interactive dashboard presents <strong>12,000 generated visualizations</strong>
+                to explore how AI systems handle color associations in data visualization.
+            </p>
+
+            <div style="display: flex; gap: 30px; justify-content: center; flex-wrap: wrap;">
+                <div class="home-card" onclick="switchTab('mosaic', event)">
+                    <div style="font-size: 48px; margin-bottom: 20px;">▦</div>
+                    <h3 style="color: #fff; font-size: 22px; margin-bottom: 12px;">Mosaic View</h3>
+                    <p style="color: #888; font-size: 14px; line-height: 1.6;">Browse all generated visualizations in a grid layout. Filter by category, prompt strategy, and model.</p>
+                    <div style="color: #e94560; font-size: 24px; margin-top: 20px;">→</div>
+                </div>
+                <div class="home-card" onclick="switchTab('scatter', event)">
+                    <div style="font-size: 48px; margin-bottom: 20px;">⋅</div>
+                    <h3 style="color: #fff; font-size: 22px; margin-bottom: 12px;">Scatter Plot</h3>
+                    <p style="color: #888; font-size: 14px; line-height: 1.6;">Explore the distribution of colors (HSV/RGB) across different prompt strategies and models.</p>
+                    <div style="color: #e94560; font-size: 24px; margin-top: 20px;">→</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mosaic" class="view">
         <div class="controls">
             <div class="control-group">
                 <label>Case:</label>
@@ -314,18 +388,6 @@
                     <option value="C2">C2 (Left/Right)</option>
                     <option value="C3">C3 (Profit/Loss)</option>
                 </select>
-            </div>
-            <div class="control-group" id="patchToggleGroup" style="display: none;">
-                <span style="display: flex; align-items: center; gap: 8px; position: relative;">
-                    <span style="cursor: help; border-bottom: 1px dashed #888; font-size: 14px; color: #aaa;" 
-                       onmouseenter="showPatchTooltip(event)" 
-                       onmouseleave="hidePatchTooltip()">Show Patch:</span>
-                    <span id="patchTooltip" style="display:none; position:absolute; background:rgba(30, 30, 50, 0.95); color:#eee; padding:10px 14px; border-radius:6px; font-size:13px; z-index:1000; top: 100%; left: 0; white-space: normal; max-width: 320px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); border: 1px solid #666; line-height: 1.5;">We conducted complementary audits (T4, T6, T7 specifically) for C2<br>because its original hypotheses were not fully supported.</span>
-                </span>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="patchToggle" onchange="updateVisualization()">
-                    <span class="toggle-slider"></span>
-                </label>
             </div>
             <div class="control-group" style="display: none;">
                 <label>Mode:</label>
@@ -350,7 +412,7 @@
             <div class="control-group">
                 <label style="margin-right:8px;">Group by Tested Conditions & Models:</label>
                 <label class="switch">
-                    <input type="checkbox" id="groupByToggle" onchange="toggleGroupBy()">
+                    <input type="checkbox" id="groupByToggle" checked onchange="toggleGroupBy()">
                     <span class="slider"></span>
                 </label>
             </div>
@@ -382,8 +444,8 @@
             <div class="control-group">
                 <label>Color Space:</label>
                 <select id="colorSpace" onchange="updateScatterPlot()">
-                    <option value="rgb" selected>RGB (Red, Green, Blue)</option>
-                    <option value="hsv">HSV (Hue, Saturation, Value)</option>
+                    <option value="rgb">RGB (Red, Green, Blue)</option>
+                    <option value="hsv" selected>HSV (Hue, Saturation, Value)</option>
                 </select>
             </div>
             <div class="control-group">
@@ -429,17 +491,14 @@
             </div>
             <div class="control-group" id="tGroupFilters" style="flex-basis: 100%; justify-content: center; display: none;">
                 <span style="color:#aaa;margin-right:8px;">Prompt:</span>
-                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S1" checked onchange="updateScatterPlot()"> T1</label>
-                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S2" checked onchange="updateScatterPlot()"> T2
-                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S3" checked onchange="updateScatterPlot()"> T3
-                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S4" checked onchange="updateScatterPlot()"> T4
-                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S4_batch" checked onchange="updateScatterPlot()"> S4_batch
-                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S5" checked onchange="updateScatterPlot()"> T5
-                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S6" checked onchange="updateScatterPlot()"> T6
-                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S6_batch" checked onchange="updateScatterPlot()"> S6_batch
-                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S7" checked onchange="updateScatterPlot()"> T7
-                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S7_batch" checked onchange="updateScatterPlot()"> S7_batch
-                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S8" checked onchange="updateScatterPlot()"> T8</label>
+                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S1" checked onchange="updateScatterPlot()"> S1</label>
+                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S2" checked onchange="updateScatterPlot()"> S2
+                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S3" checked onchange="updateScatterPlot()"> S3
+                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S4" checked onchange="updateScatterPlot()"> S4
+                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S5" checked onchange="updateScatterPlot()"> S5
+                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S6" checked onchange="updateScatterPlot()"> S6
+                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S7" checked onchange="updateScatterPlot()"> S7
+                <label style="margin-right:6px;"><input type="checkbox" class="t-group-checkbox" value="S8" checked onchange="updateScatterPlot()"> S8</label>
             </div>
             <div class="control-group" id="modelFilters" style="flex-basis: 100%; justify-content: center; display: none;">
                 <span style="color:#aaa;margin-right:8px;">Model:</span>
@@ -465,37 +524,33 @@
         let colorData = [];
         let groupBy = 'none';
         let currentCategory = 'C1';
-        let lastPatchShow = false;
 
         // T prompt conditions for tooltips
         const tPromptConditions = {
-            "C1_S1": "Using color to encode Man and Woman.",
-            "C1_S2": "Using semantically-resonant colors (i.e., leveraging concept-color associations) to encode Man and Woman.",
-            "C1_S3": "Using semantically-resonant colors (i.e., leveraging concept-color associations). You are a professional visualization designer familiar with gender coloring.",
-            "C1_S4": "Using semantically-resonant colors (i.e., leveraging concept-color associations). You are a professional visualization designer aware of gender visual bias.",
-            "C1_S5": "Using semantically-resonant colors (i.e., leveraging concept-color associations). Choosing the occupation of [Preschool and kindergarten teachers].",
-            "C1_S6": "Using semantically-resonant colors (i.e., leveraging concept-color associations). Choosing the occupation of [Business operations specialists, all other].",
-            "C1_S7": "Using semantically-resonant colors (i.e., leveraging concept-color associations). Use pink for Man and blue for Woman.",
-            "C1_S8": "Using semantically-resonant colors (i.e., leveraging concept-color associations). Do not use blue for Man and pink for Woman.",
-            "C2_S1": "Using color to encode Left and Right political parties.",
-            "C2_S2": "Using semantically-resonant colors (i.e., leveraging concept-color associations) to encode Left and Right political parties.",
-            "C2_S3": "Using semantically-resonant colors (i.e., leveraging concept-color associations). You are a professional visualization designer familiar with political coloring.",
-            "C2_S4": "Using semantically-resonant colors (i.e., leveraging concept-color associations). You are a professional visualization designer aware of the cultural specificity of political color associations.",
-            "C2_S5": "Using semantically-resonant colors (i.e., leveraging concept-color associations). Selecting the France election for analysis.",
-            "C2_S6": "Using semantically-resonant colors (i.e., leveraging concept-color associations). Selecting the USA election for analysis.",
-            "C2_S7": "Using semantically-resonant colors (i.e., leveraging concept-color associations). Use blue for Left and red for Right.",
-            "C2_S8": "Using semantically-resonant colors (i.e., leveraging concept-color associations). Do not use red for Left and blue for Right.",
-            "C2_S4_batch": "Using semantically-resonant colors (i.e., leveraging concept-color associations). You are a professional visualization designer aware of non-Western political party coloring cultures.",
-            "C2_S6_batch": "Using semantically-resonant colors (i.e., leveraging concept-color associations). Selecting the Costa Rica election for analysis.",
-            "C2_S7_batch": "Using semantically-resonant colors (i.e., leveraging concept-color associations). Use cyan for Right and yellow for Left.",
-            "C3_S1": "Using color to encode stock Index profit and loss.",
-            "C3_S2": "Using semantically-resonant colors (i.e., leveraging concept-color associations) to encode stock Index profit and loss.",
-            "C3_S3": "Using semantically-resonant colors (i.e., leveraging concept-color associations). You are a professional visualization designer familiar with financial coloring.",
-            "C3_S4": "Using semantically-resonant colors (i.e., leveraging concept-color associations). You are a professional visualization designer aware of non-Western stock market coloring cultures.",
-            "C3_S5": "Using semantically-resonant colors (i.e., leveraging concept-color associations). Selecting the NYA (New York Stock Exchange) for analysis.",
-            "C3_S6": "Using semantically-resonant colors (i.e., leveraging concept-color associations). Selecting the 000001.SS (Shanghai Stock Exchange) for analysis.",
-            "C3_S7": "Using semantically-resonant colors (i.e., leveraging concept-color associations). Using red for Profit and green for Loss.",
-            "C3_S8": "Using semantically-resonant colors (i.e., leveraging concept-color associations). Do not use green for Profit and red for Loss.",
+            "C1_S1": "Use color to encode Man and Woman.",
+            "C1_S2": "Use semantically-resonant colors (i.e., leveraging concept-color associations) to encode Man and Woman.",
+            "C1_S3": "Use semantically-resonant colors (i.e., leveraging concept-color associations). You are a professional visualization designer familiar with gender coloring.",
+            "C1_S4": "Use semantically-resonant colors (i.e., leveraging concept-color associations). You are a professional visualization designer aware of gender visual bias.",
+            "C1_S5": "Use semantically-resonant colors (i.e., leveraging concept-color associations). Choosing the occupation of [Preschool and kindergarten teachers].",
+            "C1_S6": "Use semantically-resonant colors (i.e., leveraging concept-color associations). Choosing the occupation of [Business operations specialists, all other].",
+            "C1_S7": "Use semantically-resonant colors (i.e., leveraging concept-color associations). Use pink for Man and blue for Woman.",
+            "C1_S8": "Use semantically-resonant colors (i.e., leveraging concept-color associations). Do not use blue for Man and pink for Woman.",
+            "C2_S1": "Use color to encode Left and Right political parties.",
+            "C2_S2": "Use semantically-resonant colors (i.e., leveraging concept-color associations) to encode Left and Right political parties.",
+            "C2_S3": "Use semantically-resonant colors (i.e., leveraging concept-color associations). You are a professional visualization designer familiar with political coloring.",
+            "C2_S4": "Use semantically-resonant colors (i.e., leveraging concept-color associations). You are a professional visualization designer aware of the non-European political color associations.",
+            "C2_S5": "Use semantically-resonant colors (i.e., leveraging concept-color associations). Selecting the France election for analysis.",
+            "C2_S6": "Use semantically-resonant colors (i.e., leveraging concept-color associations). Selecting the USA election for analysis.",
+            "C2_S7": "Use semantically-resonant colors (i.e., leveraging concept-color associations). Use blue for Left and red for Right.",
+            "C2_S8": "Use semantically-resonant colors (i.e., leveraging concept-color associations). Do not use red for Left and blue for Right.",
+            "C3_S1": "Use color to encode stock Index profit and loss.",
+            "C3_S2": "Use semantically-resonant colors (i.e., leveraging concept-color associations) to encode stock Index profit and loss.",
+            "C3_S3": "Use semantically-resonant colors (i.e., leveraging concept-color associations). You are a professional visualization designer familiar with financial coloring.",
+            "C3_S4": "Use semantically-resonant colors (i.e., leveraging concept-color associations). You are a professional visualization designer aware of non-Western stock market coloring cultures.",
+            "C3_S5": "Use semantically-resonant colors (i.e., leveraging concept-color associations). Selecting the NYA (New York Stock Exchange) for analysis.",
+            "C3_S6": "Use semantically-resonant colors (i.e., leveraging concept-color associations). Selecting the 000001.SS (Shanghai Stock Exchange) for analysis.",
+            "C3_S7": "Use semantically-resonant colors (i.e., leveraging concept-color associations). Using red for Profit and green for Loss.",
+            "C3_S8": "Use semantically-resonant colors (i.e., leveraging concept-color associations). Do not use green for Profit and red for Loss.",
         };
         function getLabelText(gender, category) {
             if (category === 'C1') {
@@ -601,23 +656,10 @@
                 }
             }
 
-            // 显示/隐藏 patch toggle (仅 C2 可用)
-            const patchToggleGroup = document.getElementById('patchToggleGroup');
             const category = document.getElementById('categoryFilter').value;
-            if (category === 'C2') {
-                patchToggleGroup.style.display = 'flex';
-            } else {
-                patchToggleGroup.style.display = 'none';
-                // C1/C3 时关闭 patch toggle
-                document.getElementById('patchToggle').checked = false;
-            }
             const mode = document.getElementById('displayMode').value;
             groupBy = document.getElementById('groupByToggle').checked ? 'both' : 'none';
             currentCategory = category;
-            // 更新 patch 显示状态
-            const patchToggle = document.getElementById('patchToggle');
-            lastPatchShow = category === 'C2' && patchToggle && patchToggle.checked;
-            
             const hasCategory = colorData.length > 0 && colorData[0].hasOwnProperty('category');
             let filteredData;
             if (hasCategory) {
@@ -739,14 +781,7 @@
                 processed.sort((a, b) => a.image_id.localeCompare(b.image_id));
             }
             if (groupBy === 'both') {
-                const showPatch = category === 'C2' && document.getElementById('patchToggle').checked;
-                // 当 patch 开关关闭时过滤掉 patch 数据
-                if (!showPatch) {
-                    processed = processed.filter(d => !d.s_group || !d.s_group.endsWith('_batch'));
-                }
-                const sGroups = showPatch
-                    ? ['S1', 'S2', 'S3', 'S4', 'S4_batch', 'S5', 'S6', 'S6_batch', 'S7', 'S7_batch', 'S8']
-                    : ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8'];
+                const sGroups = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8'];
                 const modelOrder = ['gpt-5.4', 'claude-4-5-opus', 'deepseek-v3', 'gemini-3.1-pro-preview', 'nano-banana-2'];
                 const allModels = [...new Set(processed.map(d => d.model).filter(m => m))];
                 const models = allModels.length > 0 
@@ -771,13 +806,6 @@
                     });
                 });
             } else {
-                // 当 groupby 关闭时也处理 patch 过滤
-                if (category === 'C2') {
-                    const showPatch = document.getElementById('patchToggle').checked;
-                    if (!showPatch) {
-                        processed = processed.filter(d => !d.s_group || !d.s_group.endsWith('_batch'));
-                    }
-                }
                 const { cols } = getOptimalGrid(processed.length);
                 processed.forEach((item, idx) => {
                     item.row = Math.floor(idx / cols);
@@ -798,16 +826,14 @@
             const modeChanged = lastRenderState && lastRenderState.mode !== mode;
             const groupByChanged = lastRenderState && lastRenderState.groupBy !== groupBy;
             const categoryChanged = lastRenderState && lastRenderState.category !== category;
-            const patchShowChanged = lastRenderState && lastRenderState.patchShow !== (category === 'C2' && document.getElementById('patchToggle').checked);
-
-            if (isNewSvg || modeChanged || patchShowChanged) {
+            if (isNewSvg || modeChanged) {
                 container.html('');
                 mainSvg = container.append('svg')
                     .attr('class', 'main-svg')
                     .attr('width', containerWidth)
                     .attr('height', 800);
             }
-            lastRenderState = { mode, groupBy, category, patchShow: category === 'C2' && document.getElementById('patchToggle').checked };
+            lastRenderState = { mode, groupBy, category };
             const useTransition = !isNewSvg && !modeChanged;
 
             if (groupBy !== 'none') {
@@ -817,10 +843,7 @@
             }
         }
         function renderWithTGroupingD3(data, mode, svg, containerWidth, useTransition = false, category) {
-            const showPatch = category === 'C2' && document.getElementById('patchToggle').checked;
-            const sGroups = showPatch
-                ? ['S1', 'S2', 'S3', 'S4', 'S4_batch', 'S5', 'S6', 'S6_batch', 'S7', 'S7_batch', 'S8']
-                : ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8'];
+            const sGroups = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8'];
             const modelOrder = ['gpt-5.4', 'claude-4-5-opus', 'deepseek-v3', 'gemini-3.1-pro-preview', 'nano-banana-2'];
             const allModels = [...new Set(data.map(d => d.model).filter(m => m))];
             const models = allModels.length > 0 
@@ -1519,22 +1542,6 @@
             document.getElementById('tooltip').style.display = 'none';
         }
 
-        function showPatchTooltip(event) {
-            const tooltip = document.getElementById('patchTooltip');
-            if (tooltip) {
-                tooltip.style.display = 'inline';
-                tooltip.style.position = 'fixed';
-                tooltip.style.left = (event.clientX - 50) + 'px';
-                tooltip.style.top = (event.clientY + 10) + 'px';
-            }
-        }
-
-        function hidePatchTooltip() {
-            const tooltip = document.getElementById('patchTooltip');
-            if (tooltip) {
-                tooltip.style.display = 'none';
-            }
-        }
 
         function showTPromptTooltip(event, tGroup, category) {
             const key = category + "_" + tGroup;
@@ -1566,10 +1573,23 @@
         function switchTab(tabId, event) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
-            event.target.classList.add('active');
+            // Find the tab button that triggers this tab
+            const tabBtn = document.querySelector(`.tab-btn[onclick="switchTab('${tabId}', event)"]`);
+            if (tabBtn) tabBtn.classList.add('active');
             document.getElementById(tabId).classList.add('active');
             if (tabId === 'scatter' && colorData.length > 0) {
                 updateScatterPlot();
+            }
+            // Fade background animation
+            const bgAnim = document.getElementById('bgAnim');
+            if (bgAnim) {
+                if (tabId === 'home') {
+                    bgAnim.style.transition = 'opacity 0.5s ease';
+                    bgAnim.style.opacity = '1';
+                } else {
+                    bgAnim.style.transition = 'opacity 0.3s ease';
+                    bgAnim.style.opacity = '0';
+                }
             }
         }
         function rgbToHsv(r, g, b) {
@@ -2649,6 +2669,28 @@
         function resetScatterView() {
             updateScatterPlot();
         }
+        // Floating animation
+        function animateBg() {
+            const c1 = document.getElementById('cir1');
+            const c2 = document.getElementById('cir2');
+            const c3 = document.getElementById('cir3');
+            const c4 = document.getElementById('cir4');
+            if (!c1 || !c2 || !c3 || !c4) {
+                setTimeout(animateBg, 500);
+                return;
+            }
+            let t = 0;
+            function frame() {
+                t += 0.015;
+                c1.style.transform = `translate(${Math.sin(t)*100}px, ${Math.cos(t*0.7+0)*80}px) scale(${1+Math.sin(t*2+0)*0.15})`;
+                c2.style.transform = `translate(${Math.cos(t*0.6+1.5)*-80}px, ${Math.sin(t*0.5+1)*70}px) scale(${1+Math.cos(t*1.8+0.5)*0.12})`;
+                c3.style.transform = `translate(${Math.sin(t*0.8+3)*90}px, ${Math.cos(t*0.6+2)*-100}px) scale(${1+Math.sin(t*2.2+1.5)*0.18})`;
+                c4.style.transform = `translate(${Math.cos(t*0.5+2.5)*-70}px, ${Math.sin(t*0.8+0.8)*-90}px) scale(${1+Math.cos(t*1.6+1.2)*0.14})`;
+                requestAnimationFrame(frame);
+            }
+            requestAnimationFrame(frame);
+        }
+        animateBg();
         loadData();
     </script>
 </body>
